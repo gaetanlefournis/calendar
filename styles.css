@@ -99,10 +99,11 @@ body {
 
 /* ===== VOICE BAR ===== */
 .voice-bar {
-    padding: 8px 16px 12px;
+    padding: 16px 16px 8px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .mic-btn {
@@ -164,6 +165,7 @@ body {
     color: var(--text-tertiary);
     font-style: italic;
     line-height: 1.3;
+    text-align: center;
 }
 
 /* ===== NAVIGATION BAR ===== */
@@ -629,7 +631,7 @@ body {
 
 /* ===== MOBILE ===== */
 @media (max-width: 400px) {
-    .app-header { padding: 12px 12px 8px; }
+    .app-header { padding: 12px 12px 8px; padding-top: calc(12px + env(safe-area-inset-top)); }
     .app-logo { font-size: 22px; }
     .header-btn { padding: 6px 10px; font-size: 12px; }
     .mic-btn { padding: 8px 16px 8px 12px; }

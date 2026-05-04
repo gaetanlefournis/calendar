@@ -1,11 +1,12 @@
-const CACHE = 'voicecal-v3';
+const CACHE = 'voicecal-v4';
 const ASSETS = [
     '/',
     '/index.html',
     '/styles.css',
     '/app.js',
     '/google-calendar.js',
-    '/manifest.json'
+    '/manifest.json',
+    '/icons/icon-192.png'
 ];
 
 self.addEventListener('install', e => {

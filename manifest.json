@@ -2,7 +2,7 @@
     "name": "Voice Calendar Pro",
     "short_name": "VoiceCal",
     "description": "Voice-controlled calendar with month, week, and agenda views",
-    "start_url": "/",
+    "start_url": "/calendar/",
     "display": "standalone",
     "background_color": "#0a0a0b",
     "theme_color": "#0a0a0b",

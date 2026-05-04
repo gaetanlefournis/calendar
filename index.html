@@ -43,6 +43,14 @@
                         <line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>
                     </svg>
                 </button>
+                <button class="header-btn" id="syncBtn" title="Sync with Google Calendar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    <span id="syncStatus">Sync</span>
+                </button>
             </div>
         </header>
 
@@ -151,6 +159,9 @@
         <div class="toast" id="toast"></div>
     </div>
 
+    <!-- Google Calendar API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="google-calendar.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

@@ -22,6 +22,13 @@ class VoiceCalendar {
             '#22c55e', '#06b6d4', '#ef4444', '#f97316'
         ];
 
+        // Google Calendar sync
+        this.googleSync = null;
+        this.syncEnabled = false;
+
+        // Initialize Google Calendar sync
+        this.initGoogleSync();
+
         this.init();
     }
 
@@ -776,6 +783,28 @@ class VoiceCalendar {
                 e.preventDefault();
                 this.openNewModal();
             }
+            if (e.key === 's' && e.ctrlKey) {
+                e.preventDefault();
+                if (this.syncEnabled) {
+                    this.disableSync();
+                } else {
+                    this.enableSync();
+                }
+            }
+        });
+
+        // Sync button
+        document.getElementById('syncBtn').addEventListener('click', () => {
+            if (this.syncEnabled) {
+                this.disableSync();
+                document.getElementById('syncStatus').textContent = 'Sync';
+                document.getElementById('syncBtn').classList.remove('active');
+            } else {
+                this.enableSync().then(() => {
+                    document.getElementById('syncStatus').textContent = 'Synced';
+                    document.getElementById('syncBtn').classList.add('active');
+                });
+            }
         });
     }
 
@@ -853,6 +882,138 @@ class VoiceCalendar {
         this._toastTimeout = setTimeout(() => {
             toast.classList.remove('show');
         }, 2000);
+    }
+
+    // ==================== GOOGLE CALENDAR SYNC ====================
+    async initGoogleSync() {
+        if (typeof GoogleCalendarSync !== 'undefined') {
+            this.googleSync = new GoogleCalendarSync();
+            
+            // Wait for Google API to initialize
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            if (this.googleSync.isAuthorized) {
+                this.syncEnabled = true;
+                await this.importGoogleEvents();
+            }
+        }
+    }
+
+    async enableSync() {
+        if (!this.googleSync) {
+            this.showToast('Google Calendar not available', 'error');
+            return;
+        }
+        
+        try {
+            await this.googleSync.authorize();
+            this.syncEnabled = true;
+            this.showToast('✅ Connected to Google Calendar');
+            
+            // Import events from Google
+            await this.importGoogleEvents();
+            
+            // Sync local events to Google
+            await this.googleSync.syncLocalToGoogle(this.events);
+            this.saveToStorage();
+            this.renderAll();
+        } catch (error) {
+            console.error('Authorization failed:', error);
+            this.showToast('Failed to connect to Google Calendar', 'error');
+        }
+    }
+
+    disableSync() {
+        if (this.googleSync) {
+            this.googleSync.signOut();
+        }
+        this.syncEnabled = false;
+        this.showToast('Disconnected from Google Calendar');
+        
+        // Remove Google events from local storage
+        this.events = this.events.filter(e => !e.fromGoogle);
+        this.saveToStorage();
+        this.renderAll();
+    }
+
+    async importGoogleEvents() {
+        if (!this.syncEnabled || !this.googleSync) return;
+        
+        const googleEvents = await this.googleSync.importFromGoogle();
+        
+        // Merge with local events (don't duplicate)
+        const existingGoogleIds = new Set(
+            this.events.filter(e => e.fromGoogle).map(e => e.googleEventId)
+        );
+        
+        const newEvents = googleEvents.filter(e => !existingGoogleIds.has(e.googleEventId));
+        this.events.push(...newEvents);
+        this.saveToStorage();
+        this.renderAll();
+    }
+
+    // Modify createEvent to sync with Google
+    createEvent(title, startDate, endDate, notes = '') {
+        const dateKey = this.dateKey(startDate);
+        const event = {
+            id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+            title: this.capitalize(title),
+            date: dateKey,
+            start: this.timeStr(startDate),
+            end: this.timeStr(endDate),
+            notes: notes,
+            color: this.eventColors[this.events.length % this.eventColors.length],
+            created: new Date().toISOString(),
+            googleEventId: null,
+            fromGoogle: false
+        };
+        
+        this.events.push(event);
+        this.saveToStorage();
+        
+        // Sync to Google Calendar
+        if (this.syncEnabled && this.googleSync) {
+            this.googleSync.createEvent(event).then(googleId => {
+                if (googleId) {
+                    event.googleEventId = googleId;
+                    this.saveToStorage();
+                }
+            });
+        }
+    }
+
+    // Modify updateEvent to sync with Google
+    updateEvent(id, title, dateKey, startTime, endTime, notes) {
+        const idx = this.events.findIndex(e => e.id === id);
+        if (idx === -1) return;
+        
+        const event = this.events[idx];
+        event.title = this.capitalize(title);
+        event.date = dateKey;
+        event.start = startTime;
+        event.end = endTime;
+        event.notes = notes;
+        
+        this.saveToStorage();
+        
+        // Sync to Google Calendar
+        if (this.syncEnabled && this.googleSync && event.googleEventId) {
+            this.googleSync.updateEvent(event.googleEventId, event);
+        }
+    }
+
+    // Modify deleteEvent to sync with Google
+    deleteEvent(id) {
+        const event = this.events.find(e => e.id === id);
+        if (!event) return;
+        
+        // Delete from Google Calendar first
+        if (this.syncEnabled && this.googleSync && event.googleEventId) {
+            this.googleSync.deleteEvent(event.googleEventId);
+        }
+        
+        this.events = this.events.filter(e => e.id !== id);
+        this.saveToStorage();
     }
 }
 

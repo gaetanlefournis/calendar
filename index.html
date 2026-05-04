@@ -54,24 +54,6 @@
             </div>
         </header>
 
-        <!-- Voice Control Bar -->
-        <div class="voice-bar">
-            <button class="mic-btn" id="micButton">
-                <div class="mic-icon-container">
-                    <svg class="mic-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                        <line x1="12" y1="19" x2="12" y2="23"></line>
-                        <line x1="8" y1="23" x2="16" y2="23"></line>
-                    </svg>
-                </div>
-                <div class="voice-text" id="voiceStatus">Tap mic & speak</div>
-            </button>
-            <div class="voice-examples" id="voiceExamples">
-                Try: "Grocery shopping tomorrow 9 to 10 AM"
-            </div>
-        </div>
-
         <!-- Navigation Bar -->
         <div class="nav-bar">
             <button class="nav-arrow" id="prevPeriod">
@@ -95,6 +77,24 @@
                     <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
                 </div>
                 <div class="month-grid" id="monthGrid"></div>
+
+                <!-- Voice Control Bar (month view only) -->
+                <div class="voice-bar">
+                    <button class="mic-btn" id="micButton">
+                        <div class="mic-icon-container">
+                            <svg class="mic-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                <line x1="12" y1="19" x2="12" y2="23"></line>
+                                <line x1="8" y1="23" x2="16" y2="23"></line>
+                            </svg>
+                        </div>
+                        <div class="voice-text" id="voiceStatus">Tap mic & speak</div>
+                    </button>
+                    <div class="voice-examples" id="voiceExamples">
+                        Try: "Grocery shopping tomorrow 9 to 10 AM"
+                    </div>
+                </div>
             </div>
 
             <!-- Week View -->

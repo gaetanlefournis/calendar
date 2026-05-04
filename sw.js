@@ -1,9 +1,10 @@
-const CACHE = 'voicecal-v2';
+const CACHE = 'voicecal-v3';
 const ASSETS = [
     '/',
     '/index.html',
     '/styles.css',
     '/app.js',
+    '/google-calendar.js',
     '/manifest.json'
 ];
 

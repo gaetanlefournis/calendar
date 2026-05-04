@@ -732,10 +732,28 @@ class VoiceCalendar {
         // Today button
         document.getElementById('todayBtn').addEventListener('click', () => {
             const today = new Date();
-            today.setHours(0,0,0,0);
-            this.currentDate = today;
-            this.selectedDate = today;
+            this.currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            this.selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            
+            // Load events for today
+            const todayKey = this.dateKey(this.selectedDate);
+            
+            // If week view, center the week on today
+            if (this.currentView === 'week') {
+                this.currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            }
+            
             this.renderAll();
+            
+            // Scroll to today if in agenda view
+            if (this.currentView === 'agenda') {
+                setTimeout(() => {
+                    const todayHeader = document.querySelector('.agenda-date-header.today');
+                    if (todayHeader) {
+                        todayHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            }
         });
 
         // FAB
